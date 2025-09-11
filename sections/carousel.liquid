@@ -113,7 +113,7 @@
     </div>
   {% endif %}
 
-  <div class="carousel-inner">
+  <div class="carousel-inner d-flex justify-content-center text-center mx-auto w-100">
     {% for block in section.blocks %}
       <div class="carousel-item d-flex justify-content-center {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
 
