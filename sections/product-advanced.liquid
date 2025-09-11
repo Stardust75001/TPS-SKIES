@@ -1,4 +1,4 @@
-{% comment %}
+il se trouve dza{% comment %}
 Section produit avancée avec galerie interactive et blocs dynamiques
 {% endcomment %}
 
@@ -72,15 +72,40 @@ Section produit avancée avec galerie interactive et blocs dynamiques
 
                 {% when 'variants' %}
                   {% if product.variants.size > 1 %}
+                    {% assign color_synonyms = 'color,colour,couleur' | split: ',' %}
+                    {% assign option_is_color = false %}
+                    {% for option in product.options_with_values %}
+                      {% assign opt_name = option.name | downcase %}
+                      {% assign opt_name_norm = opt_name
+                        | replace: 'é','e'
+                        | replace: 'è','e'
+                        | replace: 'ê','e' %}
+                      {% if color_synonyms contains opt_name_norm %}
+                        {% assign option_is_color = true %}
+                      {% endif %}
+                    {% endfor %}
                     {% form 'product', product %}
                       {% for option in product.options_with_values %}
                         <div class="variant-option mb-3">
                           <label class="form-label">{{ option.name }}</label>
-                          <select class="form-select" name="options[{{ option.name }}]">
-                            {% for value in option.values %}
-                              <option value="{{ value }}">{{ value }}</option>
-                            {% endfor %}
-                          </select>
+                          {% if option_is_color %}
+                            <div class="swatch-list d-flex gap-2">
+                              {% for value in option.values %}
+                                {% assign swatch = value | downcase %}
+                                {% assign swatch_obj = shop.metaobjects['color_swatch'][swatch] %}
+                                <label class="swatch-label" style="cursor:pointer;">
+                                  <input type="radio" name="options[{{ option.name }}]" value="{{ value }}" style="display:none;">
+                                  <span class="swatch-color" style="display:inline-block;width:32px;height:32px;border-radius:50%;border:1px solid #ccc;background:{{ swatch_obj.color | default: swatch }};" title="{{ value }}"></span>
+                                </label>
+                              {% endfor %}
+                            </div>
+                          {% else %}
+                            <select class="form-select" name="options[{{ option.name }}]">
+                              {% for value in option.values %}
+                                <option value="{{ value }}">{{ value }}</option>
+                              {% endfor %}
+                            </select>
+                          {% endif %}
                         </div>
                       {% endfor %}
                     {% endform %}
