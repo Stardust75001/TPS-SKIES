@@ -2189,3 +2189,41 @@ main {
 #offcanvas-wishlist .product-listing a { position: relative; z-index: 2; pointer-events: auto; }
 #offcanvas-wishlist .card, 
 #offcanvas-wishlist li { position: relative; }
+/* === Lang selector: desktop + mobile fix === */
+.top-social-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative; padding:6px 12px;
+}
+
+/* ancre le sélecteur dans la barre */
+.language-selector-right{ position:relative; margin-left:auto; z-index:3; }
+.language-selector-right ul{ display:flex; gap:.75rem; margin:0; padding:0; list-style:none; }
+.language-selector-right li{ display:flex; align-items:center; }
+.language-selector-right a{ display:inline-flex; align-items:center; gap:.3rem; text-decoration:none; color:inherit; }
+
+/* drapeaux */
+.language-selector-right img.flag-icon{ width:20px; height:14px; object-fit:cover; border-radius:2px; }
+
+/* état actif + hover */
+.language-selector-right a[aria-current="true"]{ border-bottom:2px solid var(--color-primary, #ba986e); font-weight:600; }
+.language-selector-right a:hover{ color:var(--color-primary, #ba986e); }
+
+/* --- Mobile --- */
+@media (max-width: 768px){
+  .top-social-bar{ padding:6px 12px; }
+  .language-selector-right{
+    position:absolute;             /* l’ancre dans la barre */
+    right:8px; top:50%; transform:translateY(-50%);
+  }
+  .language-selector-right ul{ gap:.4rem; }
+  .language-selector-right img.flag-icon{ width:18px; height:12px; }
+  .language-selector-right .lang-text{ display:none; } /* flags only sur petit écran */
+}
+
+/* iOS notch / safe area */
+@supports(padding:max(0px)){
+  .top-social-bar{ padding-top:max(6px, env(safe-area-inset-top)); }
+}
+
+/* si ton header est sticky, assure un empilement correct */
+.header-sticky-group{ position:sticky; top:0; z-index:1000; }
