@@ -31,9 +31,9 @@
       {% assign is_collection = request.page_type == 'collection' %}
       {% if is_collection %}
         {% if language.iso_code == localization.default_language.iso_code %}
-          {% assign target_url = '/collections' %}
+          {% assign target_url = '/' %}
         {% else %}
-          {% assign target_url = '/' | append: language.iso_code | append: '/collections' %}
+          {% assign target_url = '/' | append: language.iso_code %}
         {% endif %}
       {% else %}
         {% if language.iso_code == localization.default_language.iso_code %}
