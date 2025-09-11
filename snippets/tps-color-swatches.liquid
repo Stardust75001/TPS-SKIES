@@ -1,137 +1,177 @@
 {%- comment -%}
-Affiche des pastilles de couleur basées sur le méta-objet `color_swatch`.
-Suppose les champs : label (texte), hex (texte), image_1x (image), image_2x (image).
-Lie les clics aux sélecteurs de variantes existants du thème.
+  TPS – Color Swatches
+  Affiche des pastilles liées au métaobjet `color_swatch`
+  À inclure où vous voulez dans la fiche produit.
+
+  Utilisation typique :
+  {% render 'tps-color-swatches', product: product %}
+
+  Variables d’entrée :
+  - product (obligatoire)
 {%- endcomment -%}
 
+{%- assign option_names = 'color|colour|couleur' | split: '|' -%}
 {%- assign color_index = nil -%}
-{%- assign color_option = nil -%}
+{%- assign color_option_name = nil -%}
+
 {%- for opt in product.options_with_values -%}
-  {%- assign opt_name = opt.name | downcase -%}
-  {%- if opt_name == 'color' or opt_name == 'couleur' or opt_name == 'colour' -%}
-    {%- assign color_index = forloop.index0 -%}
-    {%- assign color_option = opt -%}
+  {%- assign n = opt.name | downcase -%}
+  {%- if option_names contains n -%}
+    {%- assign color_index = forloop.index -%} {# 1..3 #}
+    {%- assign color_option_name = opt.name -%}
     {%- break -%}
   {%- endif -%}
 {%- endfor -%}
 
-{%- if color_index != nil and color_option and color_option.values.size > 0 -%}
-  {%- assign current_value = product.selected_or_first_available_variant.options[color_index] -%}
+{%- if color_index -%}
+  {%- assign values = product.options_with_values[color_index | minus: 1].values -%}
 
-  <div id="tps-color" class="tps-color">
-    <div class="tps-color__label">
-      {{ color_option.name }}:
-      <span data-current-color>{{ current_value }}</span>
+  <div class="tps-color-swatch-wrap" data-product-id="{{ product.id }}" data-color-index="{{ color_index }}">
+    <div class="tps-color-swatch-head">
+      <span class="tps-color-swatch-label">
+        {{ color_option_name }}:
+        <span class="tps-current-color-name">
+          {%- assign sel = product.selected_or_first_available_variant -%}
+          {{ sel["option" | append: color_index] }}
+        </span>
+      </span>
     </div>
 
-    <div class="tps-color__swatches" role="listbox" aria-label="{{ color_option.name }}">
-      {%- for val in color_option.values -%}
+    <ul class="tps-color-swatches" role="list">
+      {%- for val in values -%}
         {%- assign handle = val | handleize -%}
-        {%- assign swatch = shop.metaobjects['color_swatch'][handle] -%}
-        <button
-          type="button"
-          class="tps-swatch{% if val == current_value %} is-active{% endif %}"
-          data-color="{{ val | escape }}"
-          aria-label="{{ val }}"
-          role="option"
-          {% if swatch and swatch.hex != blank %} style="--swatch-bg: {{ swatch.hex }};"{% endif %}
-        >
-          {%- if swatch and swatch.image_1x != blank -%}
-            <img
-              src="{{ swatch.image_1x | image_url: width: 64 }}"
-              alt="{{ val }}"
-              loading="lazy"
-            >
+        {%- assign sw = shop.metaobjects.color_swatch[handle] -%}
+        {%- assign is_current = false -%}
+        {%- if sel["option" | append: color_index] == val -%}{%- assign is_current = true -%}{%- endif -%}
+
+        <li class="tps-swatch{% if is_current %} is-active{% endif %}"
+            tabindex="0"
+            role="button"
+            aria-pressed="{{ is_current }}"
+            data-color="{{ val | escape }}"
+            data-color-handle="{{ handle }}">
+          {%- if sw and sw.image_1x -%}
+            <img class="tps-swatch-img"
+                 src="{{ sw.image_1x | image_url: width: 60 }}"
+                 alt="{{ sw.label | default: val }}"
+                 loading="lazy">
+          {%- elsif sw and sw.hex -%}
+            <span class="tps-swatch-chip" style="background-color: {{ sw.hex }};"></span>
           {%- else -%}
-            <span class="tps-swatch__chip" aria-hidden="true"></span>
+            <span class="tps-swatch-chip tps-swatch-chip--empty" aria-hidden="true"></span>
+            <span class="tps-swatch-text">{{ val }}</span>
           {%- endif -%}
-        </button>
+          <span class="visually-hidden">{{ sw.label | default: val }}</span>
+        </li>
       {%- endfor -%}
-    </div>
+    </ul>
   </div>
 
   <style>
-    .tps-color { margin: 0.75rem 0 1rem; }
-    .tps-color__label { margin-bottom: .5rem; font-weight: 500; }
-    .tps-color__swatches { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .tps-swatch{
-      width: 30px; height: 30px; padding: 0;
-      border: 1px solid rgba(0,0,0,.15);
-      border-radius: 8px;
-      background: var(--swatch-bg,#fff);
-      display: inline-flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    .tps-swatch img{ width:100%; height:100%; object-fit: cover; border-radius: 7px; }
-    .tps-swatch__chip{ width:100%; height:100%; display:block; border-radius: 7px;
-      background: var(--swatch-bg,#eee);
-    }
-    .tps-swatch.is-active{ outline: 2px solid #111; outline-offset: 2px; }
+    .tps-color-swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 0;padding:0;list-style:none}
+    .tps-swatch{width:36px;height:36px;border:1px solid var(--color-border, #ddd);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative;outline:none;background:#fff}
+    .tps-swatch.is-active{box-shadow:0 0 0 2px #111 inset}
+    .tps-swatch-img{width:100%;height:100%;object-fit:cover;border-radius:5px}
+    .tps-swatch-chip{width:24px;height:24px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.12)}
+    .tps-swatch-chip--empty{background:repeating-conic-gradient(#eee 0 25%, #ccc 0 50%) 50% / 8px 8px}
+    .tps-swatch .tps-swatch-text{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:.65rem;background:rgba(255,255,255,.85);padding:0 .25rem;border-radius:3px}
+    .tps-color-swatch-label{font-weight:600}
+    .visually-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden}
   </style>
 
   <script>
-  (() => {
-    const wrap = document.getElementById('tps-color');
-    if (!wrap) return;
+  (function(){
+    const wrap = document.currentScript.closest('.tps-color-swatch-wrap');
+    if(!wrap) return;
 
-    const currentEl = wrap.querySelector('[data-current-color]');
-    // Nom exact de l'option couleur côté produit (Color / Couleur / Colour…)
-    const OPTION_NAME = {{ color_option.name | json }};
-    const FALLBACK_NAMES = ["Color","Couleur","Colour"];
-    const NAMES_TO_TRY = [OPTION_NAME, ...FALLBACK_NAMES.filter(n => n !== OPTION_NAME)];
+    const productId = wrap.getAttribute('data-product-id');
+    const colorIndex = parseInt(wrap.getAttribute('data-color-index'), 10);
+    const currentText = wrap.querySelector('.tps-current-color-name');
 
-    // Trouve les inputs/selects de variantes dans le formulaire produit
-    const productForm = document.querySelector('form[action*="/cart/add"]');
+    // Trouver le formulaire produit le plus proche
+    const productForm = wrap.closest('form[action*="/cart/add"]') || document.querySelector(`form[action*="/cart/add"][data-product-id="${productId}"]`);
 
-    function setVariantOption(optionName, value){
-      if (!productForm) return false;
+    // Utilitaires pour setter la valeur d'option dans le thème (fonctionne avec radios OU selects)
+    function setVariantOption(optionIndex, value){
+      if(!productForm) return;
 
-      // 1) radios
-      const radio = productForm.querySelector(
-        `[name="options[${CSS.escape(optionName)}]"][value="${CSS.escape(value)}"]`
-      );
-      if (radio) { radio.click(); return true; }
+      // Radios (name="options[Color]")
+      const radioName = Array.from(productForm.querySelectorAll('[name^="options["]'))
+        .find(el => el.name.match(new RegExp(`^options\$begin:math:display$[^\\$end:math:display$]+\\]$`)) && el.closest('[data-option-position]')?.getAttribute('data-option-position') == String(optionIndex))
+        ?.name;
 
-      // 2) select
-      const select = productForm.querySelector(
-        `select[name="options[${CSS.escape(optionName)}]"]`
-      );
-      if (select) {
-        select.value = value;
-        select.dispatchEvent(new Event('change',{bubbles:true}));
-        return true;
+      if(radioName){
+        const radio = productForm.querySelector(`[name="${radioName}"][value="${CSS.escape(value)}"]`);
+        if(radio){ radio.click(); return; }
       }
-      return false;
+
+      // Selects (name="options[Color]")
+      const select = Array.from(productForm.querySelectorAll('select[name^="options["]'))
+        .find(sel => sel.closest('[data-option-position]')?.getAttribute('data-option-position') == String(optionIndex));
+      if(select){
+        select.value = value;
+        select.dispatchEvent(new Event('change', {bubbles:true}));
+        return;
+      }
+
+      // Fallback : essayer par index direct option1/2/3 (certains thèmes)
+      const anySelect = productForm.querySelector(`select[name="options[${optionIndex}]"]`);
+      if(anySelect){
+        anySelect.value = value;
+        anySelect.dispatchEvent(new Event('change', {bubbles:true}));
+      }
     }
 
-    // Clic sur une pastille => sélectionne la variante + met à jour le libellé
-    wrap.addEventListener('click', (e) => {
-      const btn = e.target.closest('.tps-swatch');
-      if (!btn) return;
-      const value = btn.getAttribute('data-color');
-
-      // UI
-      wrap.querySelectorAll('.tps-swatch.is-active').forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      if (currentEl) currentEl.textContent = value;
-
-      // Synchronise l'option couleur du formulaire produit
-      for (const name of NAMES_TO_TRY) {
-        if (setVariantOption(name, value)) break;
-      }
-    });
-
-    // Quand le sélecteur de variantes du thème change, on resynchronise le bloc
-    document.addEventListener('change', (e) => {
-      const el = e.target;
-      if (!el.name) return;
-      if (!NAMES_TO_TRY.some(n => el.name === `options[${n}]`)) return;
-      const val = el.value;
-      if (currentEl) currentEl.textContent = val;
+    function activateUI(value){
+      // Texte "Couleur: X"
+      if(currentText){ currentText.textContent = value; }
+      // Pastilles actives
       wrap.querySelectorAll('.tps-swatch').forEach(b => {
-        b.classList.toggle('is-active', b.getAttribute('data-color') === val);
+        b.classList.toggle('is-active', b.getAttribute('data-color') === value);
+        b.setAttribute('aria-pressed', b.classList.contains('is-active'));
+      });
+    }
+
+    // Clic / clavier sur les pastilles
+    wrap.querySelectorAll('.tps-swatch').forEach(btn => {
+      function choose(){
+        const val = btn.getAttribute('data-color');
+        setVariantOption(colorIndex, val);
+        activateUI(val);
+      }
+      btn.addEventListener('click', choose);
+      btn.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); choose(); }
       });
     });
+
+    // Quand le sélecteur de variantes natif change (pour rester synchronisé)
+    document.addEventListener('change', (e) => {
+      const t = e.target;
+      if(!productForm || !productForm.contains(t)) return;
+
+      // Essayons de retrouver la valeur actuelle de l'option couleur
+      // 1) via radios sélectionnés
+      const checked = productForm.querySelector(`[data-option-position="${colorIndex}"] input[type="radio"]:checked`);
+      if(checked){ activateUI(checked.value); return; }
+
+      // 2) via select
+      const select = productForm.querySelector(`[data-option-position="${colorIndex}"] select`);
+      if(select){ activateUI(select.value); return; }
+
+      // 3) via variant JSON embarqué dans le thème (option1/2/3 sur variant courant)
+      try{
+        const json = productForm.querySelector('[type="application/json"][data-product]')?.textContent;
+        if(json){
+          const state = JSON.parse(json);
+          const v = state?.currentVariant || state?.selectedVariant;
+          if(v){
+            const key = 'option' + String(colorIndex);
+            if(v[key]) activateUI(v[key]);
+          }
+        }
+      }catch(_){}
+    }, true);
   })();
   </script>
 {%- endif -%}
