@@ -72,6 +72,7 @@ Section produit avancée avec galerie interactive et blocs dynamiques
 
                 {% when 'variants' %}
                   {% if product.variants.size > 1 %}
+                    {% render 'tps-color-swatches', product: product %}
                     {% assign color_synonyms = 'color,colour,couleur' | split: ',' %}
                     {% assign option_is_color = false %}
                     {% for option in product.options_with_values %}
