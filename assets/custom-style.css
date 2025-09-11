@@ -2148,3 +2148,10 @@ main {
 #offcanvas-wishlist .product-listing a { position: relative; z-index: 2; pointer-events: auto; }
 #offcanvas-wishlist .card, 
 #offcanvas-wishlist li { position: relative; }
+/* Hero optimisation */
+.video-hero img, .video-hero video {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
