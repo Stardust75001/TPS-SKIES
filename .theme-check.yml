@@ -1,0 +1,8 @@
+enabled_checks:
+  - TranslationKeyExists
+  - MissingTranslations
+  - UnknownFilter
+  - NestedSnippet
+  - ValidSchema
+
+root: .

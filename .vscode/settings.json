@@ -1,0 +1,45 @@
+{
+  "i18n-ally.enabled": true,
+  "i18n-ally.framework": "custom",
+  "i18n-ally.sortKeys": true,
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.displayLanguage": "fr",
+  "i18n-ally.enabledParsers": ["json"],
+  "i18n-ally.localesPaths": ["locales"],
+  "i18n-ally.include": [
+    "locales/*.json"
+  ],
+  "i18n-ally.exclude": [
+    "**/node_modules/**",
+    "**/.git/**"
+  ],
+  "i18n-ally.annotationInPlace": true,
+  "i18n-ally.review.enabled": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["locales/*.json"],
+      "schema": {
+        "type": "object",
+        "description": "Shopify locale file",
+        "additionalProperties": {
+          "anyOf": [
+            { "type": "string" },
+            { "$ref": "#/definitions/nested" }
+          ]
+        },
+        "definitions": {
+          "nested": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                { "type": "string" },
+                { "$ref": "#/definitions/nested" }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
