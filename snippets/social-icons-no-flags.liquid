@@ -1,30 +1,65 @@
-<style>
-  .social-img-icon {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
+{%- comment -%}
+  Social icons — liste sémantique + labels accessibles
+  Lit les URLs depuis settings_schema (ex.: settings.social_*_link)
+{%- endcomment -%}
 
-  @media screen and (max-width: 768px) {
-    .social-img-icon {
-      width: 20px;
-      height: 20px;
-    }
-  }
-</style>
+{%- assign items = "" | split: "|" -%}
 
-<a href="https://www.instagram.com/spencerandthecity/" target="_blank" rel="noopener" aria-label="Instagram">
-  <img src="{{ 'instagram.png' | asset_url }}" alt="Instagram" class="social-img-icon" loading="lazy">
-</a>
-<a href="https://www.facebook.com/thepetsociety.paris" target="_blank" rel="noopener" aria-label="Facebook">
-  <img src="{{ 'facebook.png' | asset_url }}" alt="Facebook" class="social-img-icon" loading="lazy">
-</a>
-<a href="https://www.tiktok.com/@thepetsociety_paris" target="_blank" rel="noopener" aria-label="TikTok">
-  <img src="{{ 'tiktok.png' | asset_url }}" alt="TikTok" class="social-img-icon" loading="lazy">
-</a>
-<a href="https://wa.me/3369238799" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <img src="{{ 'WhatsApp.png' | asset_url }}" alt="WhatsApp" class="social-img-icon" loading="lazy">
-</a>
-<a href="mailto:hello@thepetsociety.paris" aria-label="Email">
-  <img src="{{ 'email-icon.png' | asset_url }}" alt="Email" class="social-img-icon" loading="lazy">
-</a>
+{%- if settings.social_facebook_link != blank -%}
+  {%- assign items = items | push: "facebook::{{ settings.social_facebook_link }}" -%}
+{%- endif -%}
+{%- if settings.social_instagram_link != blank -%}
+  {%- assign items = items | push: "instagram::{{ settings.social_instagram_link }}" -%}
+{%- endif -%}
+{%- if settings.social_tiktok_link != blank -%}
+  {%- assign items = items | push: "tiktok::{{ settings.social_tiktok_link }}" -%}
+{%- endif -%}
+{%- if settings.social_youtube_link != blank -%}
+  {%- assign items = items | push: "youtube::{{ settings.social_youtube_link }}" -%}
+{%- endif -%}
+{%- if settings.social_pinterest_link != blank -%}
+  {%- assign items = items | push: "pinterest::{{ settings.social_pinterest_link }}" -%}
+{%- endif -%}
+{%- if settings.social_x_link != blank -%}
+  {%- assign items = items | push: "x::{{ settings.social_x_link }}" -%}
+{%- endif -%}
+{%- if settings.social_linkedin_link != blank -%}
+  {%- assign items = items | push: "linkedin::{{ settings.social_linkedin_link }}" -%}
+{%- endif -%}
+
+{%- if items.size > 0 -%}
+<ul class="social-list" role="list" aria-label="{{ 'general.accessibility.social_links' | t | default: 'Réseaux sociaux' }}">
+  {%- for raw in items -%}
+    {%- assign parts = raw | split: "::" -%}
+    {%- assign name  = parts[0] -%}
+    {%- assign url   = parts[1] -%}
+    <li class="social-item">
+      <a
+        class="social-link"
+        href="{{ url }}"
+        target="_blank"
+        rel="me noopener noreferrer"
+        aria-label="{{ name | capitalize }}"
+      >
+        {%- case name -%}
+          {%- when 'facebook' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.5 9H16V6h-2.5C11.6 6 11 7.3 11 9v2H9v3h2v7h3v-7h2.1l.4-3H14V9.5c0-.3.2-.5.5-.5Z"/></svg>
+          {%- when 'instagram' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3Zm-5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2.5A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5Zm5.75-2.25a.75.75 0 1 1-.75.75.75.75 0 0 1 .75-.75Z"/></svg>
+          {%- when 'tiktok' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 3h3a5 5 0 0 0 5 5v3a8 8 0 0 1-5-2v7a6 6 0 1 1-6-6h1v3h-1a3 3 0 1 0 3 3V3Z"/></svg>
+          {%- when 'youtube' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23 12s0-3.6-.5-5.3a3 3 0 0 0-2.1-2.1C18.7 4 12 4 12 4s-6.7 0-8.4.6A3 3 0 0 0 1.5 6.7C1 8.4 1 12 1 12s0 3.6.5 5.3a3 3 0 0 0 2.1 2.1C5.3 20 12 20 12 20s6.7 0 8.4-.6a3 3 0 0 0 2.1-2.1c.5-1.7.5-5.3.5-5.3ZM10 15.5v-7l6 3.5-6 3.5Z"/></svg>
+          {%- when 'pinterest' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 .1-2.8l1.6-6a3.6 3.6 0 0 1-.3-1.5c0-1.4.8-2.5 1.8-2.5 1 0 1.5.7 1.5 1.7 0 1-.6 2.4-.9 3.7-.3 1.1.5 2 1.6 2 1.9 0 3.3-2 3.3-4.9 0-2-1.4-3.4-3.8-3.4A4.3 4.3 0 0 0 7 10.3c0 .8.3 1.6.7 2.1.1.1.1.2.1.3l-.3 1.2c0 .2-.2.3-.4.2C6 13.6 5.4 12 5.4 10.6 5.4 7.6 7.7 5 11.9 5c3.2 0 5.6 2.3 5.6 5.4 0 3.1-2 5.7-4.7 5.7-1 0-1.9-.5-2.2-1l-.6 2.4c-.2.9-.8 2.1-1.2 2.8A10 10 0 1 0 12 2Z"/></svg>
+          {%- when 'x' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.6 3H21l-7.2 8.2L22.5 21H16l-5-6-5.7 6H3.2L10 12.6 2 3h6.6l4.6 5.6L17.6 3Z"/></svg>
+          {%- when 'linkedin' -%}
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9H3v12h3V9Zm.4-4A1.9 1.9 0 1 0 4.5 7 1.9 1.9 0 0 0 6.4 5ZM21 21h-3v-6.5c0-1.6-.6-2.5-1.8-2.5s-2 .9-2.3 1.8c-.1.3-.1.7-.1 1.1V21h-3V9h3v1.7c.4-.7 1.6-2 3.7-2 2.3 0 3.5 1.5 3.5 4.5V21Z"/></svg>
+        {%- endcase -%}
+        <span class="sr-only">{{ name | capitalize }}</span>
+      </a>
+    </li>
+  {%- endfor -%}
+</ul>
+{%- endif -%}
