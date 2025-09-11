@@ -8,45 +8,51 @@
 <section id="video-hero-{{ section.id }}" class="video-hero {{ section.settings.bg_color }} {{ pt }} {{ pb }} {{ mt }} {{ mb }}">
     <div class="video-hero-wrapper position-relative">
         <div class="video-container">
-            {% if section.settings.video_hosted != blank %}
-                <video 
-                    class="video-hero-video w-100 h-100" 
-                    autoplay 
-                    muted 
-                    loop 
-                    playsinline
-                    {% if section.settings.video_poster %}poster="{{ section.settings.video_poster | image_url: width: 1920 }}"{% endif %}>
-                    <source src="{{ section.settings.video_hosted }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            {% elsif section.settings.video_url != blank %}
-                {% if section.settings.video_url contains 'youtube' %}
-                    <iframe 
-                        class="video-hero-video w-100 h-100"
-                        src="https://www.youtube.com/embed/{{ section.settings.video_url | split: 'v=' | last | split: '&' | first }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video_url | split: 'v=' | last | split: '&' | first }}&controls=0&rel=0&modestbranding=1"
-                        frameborder="0" 
-                        allow="autoplay; encrypted-media" 
-                        allowfullscreen>
-                    </iframe>
-                {% elsif section.settings.video_url contains 'vimeo' %}
-                    <iframe 
-                        class="video-hero-video w-100 h-100"
-                        src="https://player.vimeo.com/video/{{ section.settings.video_url | split: '/' | last }}?autoplay=1&muted=1&loop=1&background=1&controls=0"
-                        frameborder="0" 
-                        allow="autoplay; fullscreen; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                {% endif %}
-            {% else %}
-                <div class="video-placeholder bg-secondary d-flex align-items-center justify-content-center">
-                    <div class="text-center text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="5,3 19,12 5,21"></polygon>
-                        </svg>
-                        <p class="mt-2">Add your video</p>
-                    </div>
-                </div>
-            {% endif %}
+            {%- if section.settings.image != blank -%}
+<img
+  src="{{ section.settings.image | image_url: width: 1600, format: 'webp' }}"
+  srcset="
+    {{ section.settings.image | image_url: width: 640, format: 'webp' }} 640w,
+    {{ section.settings.image | image_url: width: 960, format: 'webp' }} 960w,
+    {{ section.settings.image | image_url: width: 1280, format: 'webp' }} 1280w,
+    {{ section.settings.image | image_url: width: 1600, format: 'webp' }} 1600w
+  "
+  sizes="100vw"
+  alt="{{ section.settings.image.alt | escape }}"
+  width="1600" height="{{ 1600 | divided_by: section.settings.image.aspect_ratio | round }}"
+  loading="eager"
+  fetchpriority="high"
+  decoding="async"
+  style="max-width:100%;height:auto"
+/>
+{%- endif -%}
+
+{%- if section.settings.video_hosted != blank -%}
+<video autoplay muted loop playsinline preload="auto" poster="{{ section.settings.image | image_url: width: 1200 }}">
+  <source src="{{ section.settings.video_hosted }}" type="video/mp4">
+  Sorry, your browser doesn't support embedded videos.
+</video>
+{%- endif -%}
+
+{%- if section.settings.video_url != blank -%}
+  {% if section.settings.video_url contains 'youtube' %}
+    <iframe 
+      class="video-hero-video w-100 h-100"
+      src="https://www.youtube.com/embed/{{ section.settings.video_url | split: 'v=' | last | split: '&' | first }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video_url | split: 'v=' | last | split: '&' | first }}&controls=0&rel=0&modestbranding=1"
+      frameborder="0" 
+      allow="autoplay; encrypted-media" 
+      allowfullscreen>
+    </iframe>
+  {% elsif section.settings.video_url contains 'vimeo' %}
+    <iframe 
+      class="video-hero-video w-100 h-100"
+      src="https://player.vimeo.com/video/{{ section.settings.video_url | split: '/' | last }}?autoplay=1&muted=1&loop=1&background=1&controls=0"
+      frameborder="0" 
+      allow="autoplay; fullscreen; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  {% endif %}
+{%- endif -%}
         </div>
         
         {% if section.settings.overlay_opacity > 0 %}
