@@ -1,5 +1,100 @@
 /* === Icônes sociales uniformisées (header + footer) === */
 
+:root {
+  --z-offcanvas: 1050;
+  --header-height: 190px;
+  --header-height-landscape: 180px;
+  --header-height-portrait: 170px;
+  --header-height-tablet: 160px;
+  --header-height-mobile-large: 155px;
+  --header-height-mobile: 145px;
+  --header-height-xs: 140px;
+  --color-primary: #ba986e;
+}
+
+/* Desktop par défaut */
+/* === Newsletter Styles === */
+
+/* === NEWSLETTER MOBILE - CORRECTION MINIMALE === */
+/* === Social icons: réduire la largeur & centrer (desktop + mobile) === */
+
+/* Méga-menu (dropdown large) */
+/* Menu off-canvas (mobile/tablette) */
+
+/* Compacter l’espacement entre icônes */
+/* Ajustements réactifs supplémentaires */
+
+/* autoriser les clics quand ouvert */
+/* empêcher tout pseudo-overlay de capter le clic */
+
+/* liens produits cliquables même s’il y a des layers internes */
+/* ...existing code... */
+
+/* === Newsletter Styles === */
+/* === Social icons: réduire la largeur & centrer (desktop + mobile) === */
+
+/* Méga-menu (dropdown large) */
+/* Menu off-canvas (mobile/tablette) */
+
+/* Compacter l’espacement entre icônes */
+/* Ajustements réactifs supplémentaires */
+
+/* autoriser les clics quand ouvert */
+/* empêcher tout pseudo-overlay de capter le clic */
+
+/* liens produits cliquables même s’il y a des layers internes */
+/* ...existing code... */
+/* === Newsletter Styles === */
+
+/* === NEWSLETTER MOBILE - CORRECTION MINIMALE === */
+/* === Social icons: réduire la largeur & centrer (desktop + mobile) === */
+
+/* Méga-menu (dropdown large) */
+/* Menu off-canvas (mobile/tablette) */
+
+/* Compacter l’espacement entre icônes */
+/* Ajustements réactifs supplémentaires */
+
+/* autoriser les clics quand ouvert */
+/* empêcher tout pseudo-overlay de capter le clic */
+
+/* liens produits cliquables même s’il y a des layers internes */
+/* ...existing code... */
+/* === Newsletter Styles === */
+
+/* === NEWSLETTER MOBILE - CORRECTION MINIMALE === */
+/* === Social icons: réduire la largeur & centrer (desktop + mobile) === */
+
+/* Méga-menu (dropdown large) */
+/* Menu off-canvas (mobile/tablette) */
+
+/* Compacter l’espacement entre icônes */
+/* Ajustements réactifs supplémentaires */
+
+/* autoriser les clics quand ouvert */
+/* empêcher tout pseudo-overlay de capter le clic */
+
+/* liens produits cliquables même s’il y a des layers internes */
+/* ...existing code... */
+/* === Newsletter Styles === */
+
+/* === NEWSLETTER MOBILE - CORRECTION MINIMALE === */
+/* === Social icons: réduire la largeur & centrer (desktop + mobile) === */
+
+/* Méga-menu (dropdown large) */
+/* Menu off-canvas (mobile/tablette) */
+
+/* Compacter l’espacement entre icônes */
+/* Ajustements réactifs supplémentaires */
+
+/* autoriser les clics quand ouvert */
+/* empêcher tout pseudo-overlay de capter le clic */
+
+/* liens produits cliquables même s’il y a des layers internes */
+/* ...existing code... */
+
+/* === Icônes sociales uniformisées (header + footer) === */
+
 /* Desktop par défaut */
 .social-img-icon,
 .footer-social-icons img,
@@ -79,13 +174,18 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 9999;
+  z-index: 1040;
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
 }
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .social-img-icon,
+  .footer-social-icons img,
+  .footer-social-icons svg,
+  .dropdown-item,
+  .flag-link,
+  .tooltip-bubble {
     transition: none !important;
     animation: none !important;
   }
@@ -306,6 +406,7 @@
     line-height: 1.4 !important;
     box-sizing: border-box !important;
     background: #fff !important;
+    min-width: 0 !important;
   }
   
   /* Section newsletter plus compacte sur mobile */
@@ -338,15 +439,10 @@ main {
   }
 }
 
+
 @media screen and (max-width: 768px) and (min-width: 481px) {
   main {
     padding-top: var(--header-height-tablet, 160px) !important;
-  }
-}
-
-@media screen and (max-width: 767px) and (min-width: 481px) {
-  main {
-    padding-top: var(--header-height-mobile-large, 155px) !important;
   }
 }
 
@@ -913,25 +1009,55 @@ body {
 }
 
 /* Compacter l’espacement entre icônes */
+/* Conteneur : juste la rangée */
 .social-icons,
 .footer-social-icons {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;             /* espace horizontal entre icônes */
+  gap: 8px;
 }
 
 /* Si vos icônes sont des <img> (comme dans le footer) */
 
 /* Si vos icônes sortent du snippet en <a><svg>… */
+/* Élément cliquable : le “pastille” rond */
 .social-icons a,
 .footer-social-icons a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bs-light, #f8f9fa);
+  line-height: 0;
+  transition: transform .3s ease, opacity .3s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.social-icons a:hover,
+.footer-social-icons a:hover {
+  transform: scale(1.1);
+  opacity: .8;
+}
+.social-icons a:focus-visible,
+.footer-social-icons a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Si l’icône est une image à l’intérieur */
+.social-icons a img,
+.footer-social-icons a img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+.social-icons a svg,
+.footer-social-icons a svg {
+  width: 24px;
+  height: 24px;
 }
 
 /* Ajustements réactifs supplémentaires */
@@ -939,6 +1065,21 @@ body {
   .dropdown-megamenu .social-icons,
   .dropdown-megamenu .footer-social-icons {
     max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .social-icons a,
+  .footer-social-icons a {
+    width: 32px;
+    height: 32px;
+  }
+  .social-icons a img,
+  .footer-social-icons a img,
+  .social-icons a svg,
+  .footer-social-icons a svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -961,5 +1102,3 @@ body {
 #offcanvas-wishlist .product-listing a { position: relative; z-index: 2; pointer-events: auto; }
 #offcanvas-wishlist .card, 
 #offcanvas-wishlist li { position: relative; }
-
-/* ...existing code... */
