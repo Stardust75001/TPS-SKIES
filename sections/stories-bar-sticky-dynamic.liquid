@@ -1,64 +1,49 @@
+{% comment %}
+Section : Stories Bar Sticky Configurable (dynamique via blocks)
+{% endcomment %}
+
 <div class="stories-bar-wrapper">
   <style>
-    .stories-bar {
-      display:flex;
-      gap:.5rem;
-      justify-content:center;
-      align-items:center;
-      padding:.5rem 1rem;
-    }
-    .stories-bar-wrapper {
-      position:sticky;
-      top:var(--header-height,190px);
-      z-index:1030;
-      background:#fff;
-    }
-    .animated-stories-link {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-    }
     .tooltip-bubble {
-      opacity:0;
-      position:absolute;
-      top:-40px;
-      left:50%;
-      transform:translateX(-50%);
+      opacity: 0;
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
       background-color: {{ section.settings.tooltip_bg }};
-      color:#fff;
-      padding:6px 12px;
-      font-size:14px;
-      border-radius:4px;
-      z-index:9999;
-      pointer-events:none;
-      transition:opacity .3s ease;
-      max-width:90vw;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      color: white;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      z-index: 9999;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .tooltip-bubble::after {
-      content:"";
-      position:absolute;
-      top:100%;
-      left:50%;
-      transform:translateX(-50%);
-      border:6px solid transparent;
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
       border-top-color: {{ section.settings.tooltip_bg }};
     }
     .tooltip-bubble.hover-visible,
     .tooltip-bubble.tap-visible {
       opacity: {{ section.settings.tooltip_opacity }};
-      pointer-events:auto;
+      pointer-events: auto;
     }
     .animated-stories-link img {
-      width: {{ section.settings.icon_size | plus: 0 }}px;
-      height: {{ section.settings.icon_size | plus: 0 }}px;
+      width: {{ section.settings.icon_size }}px;
+      height: {{ section.settings.icon_size }}px;
     }
-    @media (max-width:768px) {
+    @media (max-width: 768px) {
       .animated-stories-link img {
-        width: calc({{ section.settings.icon_size | plus: 0 }}px / 2);
-        height: calc({{ section.settings.icon_size | plus: 0 }}px / 2);
+        width: calc({{ section.settings.icon_size }}px / 2);
+        height: calc({{ section.settings.icon_size }}px / 2);
       }
     }
   </style>
@@ -72,37 +57,68 @@
     {% endcase %}
 
     {% for block in section.blocks %}
-      {% assign title = block.settings.title | strip %}
-      {% assign image_obj = block.settings.image %}
-      {% assign raw_link = block.settings.link | strip %}
-      {% assign href = raw_link %}
-
-      {% if href == blank %}
-        {% assign href = base_url | append: title | handleize %}
-      {% else %}
-        {%- assign first_char = href | slice: 0, 1 -%}
-        {% unless href contains '://' or first_char == '/' %}
-          {% assign href = base_url | append: href %}
-        {% endunless %}
-      {% endif %}
-
-      {% assign tip_id = 'tip-' | append: block.id %}
-
-      <a href="{{ href }}" class="animated-stories-link" aria-describedby="{{ tip_id }}" aria-label="{{ title | escape }}">
-        {% if image_obj %}
-          <img
-            src="{{ image_obj | image_url: width: 360 }}"
-            srcset="{{ image_obj | image_url: width: 180 }} 180w, {{ image_obj | image_url: width: 360 }} 360w, {{ image_obj | image_url: width: 720 }} 720w"
-            sizes="(max-width:768px) {{ section.settings.icon_size | plus: 0 | divided_by: 2 }}px, {{ section.settings.icon_size | plus: 0 }}px"
-            alt="{{ title | escape }}"
-            loading="lazy"
-            decoding="async">
-        {% endif %}
-        <div class="tooltip-bubble" role="tooltip" id="{{ tip_id }}">{{ title | escape }}</div>
+      {% assign title = block.settings.title %}
+      {% assign image = block.settings.image | img_url: 'master' %}
+      {% assign link = block.settings.link %}
+      <a href="{{ link | prepend: base_url }}" class="animated-stories-link">
+        <img src="{{ image }}" alt="{{ title }}">
+        <div class="tooltip-bubble" role="tooltip">
+          {{ title }}
+        </div>
       </a>
     {% endfor %}
   </div>
 </div>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    const links = document.querySelectorAll(".animated-stories-link");
+
+    // Fermer toutes les bulles visibles
+    const closeAll = () => {
+      document.querySelectorAll(".tooltip-bubble.tap-visible, .tooltip-bubble.hover-visible")
+        .forEach(t => t.classList.remove("tap-visible", "hover-visible"));
+    };
+
+    // Fermer au clic hors élément (mobile)
+    document.addEventListener("click", (e) => {
+      if (isTouch && !e.target.closest(".animated-stories-link")) closeAll();
+    }, { passive: true });
+
+    // Fermer à Échap
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeAll();
+    });
+
+    links.forEach(link => {
+      const tip = link.querySelector(".tooltip-bubble");
+      if (!tip) return;
+
+      // Accessibilité : afficher au focus clavier
+      link.addEventListener("focus", () => tip.classList.add("hover-visible"));
+      link.addEventListener("blur",  () => tip.classList.remove("hover-visible"));
+
+      if (isTouch) {
+        // --- Mobile (1er tap = tooltip, 2e tap = navigation) ---
+        link.addEventListener("click", (e) => {
+          if (!tip.classList.contains("tap-visible")) {
+            e.preventDefault();
+            closeAll();
+            tip.classList.add("tap-visible");
+            // Auto-hide après 2 s
+            tip.dataset.timer && clearTimeout(tip.dataset.timer);
+            tip.dataset.timer = setTimeout(() => tip.classList.remove("tap-visible"), 2000);
+          }
+          // sinon, laisser la navigation se faire
+        }, { passive: false });
+      } else {
+        // --- Desktop (hover) ---
+        link.addEventListener("mouseenter", () => tip.classList.add("hover-visible"));
+        link.addEventListener("mouseleave", () => tip.classList.remove("hover-visible"));
+      }
+    });
+  });
+  </script>
 
 {% schema %}
 {
