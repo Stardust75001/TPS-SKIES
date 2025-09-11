@@ -1,3 +1,44 @@
+/* === Sélecteur de langue (header) === */
+.language-selector-right ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.language-selector-right li {
+  display: flex;
+  align-items: center;
+}
+
+.language-selector-right li a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem; /* espace entre drapeau et texte */
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+}
+
+.language-selector-right li a:hover {
+  color: var(--color-primary, #ba986e);
+}
+
+.language-selector-right li a[aria-current="true"] {
+  border-bottom: 2px solid var(--color-primary, #ba986e);
+  font-weight: 600;
+}
+
+.language-selector-right img.flag-icon {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+}
 /* === Variables globales === */
 :root {
   --z-header: 15000;
@@ -2148,14 +2189,3 @@ main {
 #offcanvas-wishlist .product-listing a { position: relative; z-index: 2; pointer-events: auto; }
 #offcanvas-wishlist .card, 
 #offcanvas-wishlist li { position: relative; }
-/* Hero optimisation */
-.video-hero img, .video-hero video {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-.text-light { color: #ffffff !important; }
-.bg-primary { background-color: #0a7 !important; } /* vert vif */
-a { color: #0645ad; } 
-a:focus, button:focus { outline: 2px solid #0a7; outline-offset: 2px; }
