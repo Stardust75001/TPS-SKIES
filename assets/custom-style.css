@@ -1,3 +1,21 @@
+/* Centrage et sécurité du carousel d’icônes */
+#icons-carousel { margin-left:auto; margin-right:auto; }
+#icons-carousel .carousel-item { display:block; text-align:center; }
+#icons-carousel .carousel-item > * { margin-left:auto; margin-right:auto; max-width:100%; }
+/* Safety net compatible Bootstrap slide */
+#icons-carousel .carousel-inner {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#icons-carousel .carousel-item {
+  display: block;           /* conserve le comportement BS */
+  text-align: center;       /* centre le contenu */
+}
+#icons-carousel .carousel-item > * {
+  margin-left: auto;
+  margin-right: auto;       /* centre l’élément (icône, image, etc.) */
+}
 /* =================== */
 /* 0) Variables globales */
 /* =================== */
