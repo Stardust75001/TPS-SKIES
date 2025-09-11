@@ -28,10 +28,19 @@
       {% if current_path == '' or current_path == '/' %}
         {% assign current_path = '' %}
       {% endif %}
-      {% if language.iso_code == localization.default_language.iso_code %}
-        {% assign target_url = current_path %}
+      {% assign is_collection = request.page_type == 'collection' %}
+      {% if is_collection %}
+        {% if language.iso_code == localization.default_language.iso_code %}
+          {% assign target_url = '/collections' %}
+        {% else %}
+          {% assign target_url = '/' | append: language.iso_code | append: '/collections' %}
+        {% endif %}
       {% else %}
-        {% assign target_url = '/' | append: language.iso_code | append: current_path %}
+        {% if language.iso_code == localization.default_language.iso_code %}
+          {% assign target_url = current_path %}
+        {% else %}
+          {% assign target_url = '/' | append: language.iso_code | append: current_path %}
+        {% endif %}
       {% endif %}
       {% assign flag_name = language.iso_code | downcase | prepend: 'flag-' | append: '.png' %}
       <a href="{{ target_url }}" aria-label="{{ language.endonym_name | default: language.name }}" hreflang="{{ language.iso_code }}">
