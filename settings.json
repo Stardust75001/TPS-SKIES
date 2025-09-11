@@ -1,0 +1,12 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "files.associations": {
+    "*.liquid": "liquid"
+  }
+}
