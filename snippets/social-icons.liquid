@@ -22,30 +22,29 @@
     {% assign current_path = '' %}
   {% endif %}
 
-  <div class="language-selector-right">
-    {% for language in localization.available_languages %}
-      {% assign current_path = request.path | remove_first: '/fr' | remove_first: '/de' %}
-      {% if current_path == '' or current_path == '/' %}
-        {% assign current_path = '' %}
-      {% endif %}
-      {% assign is_collection = request.page_type == 'collection' %}
-      {% if is_collection %}
-        {% if language.iso_code == localization.default_language.iso_code %}
-          {% assign target_url = '/' %}
-        {% else %}
-          {% assign target_url = '/' | append: language.iso_code %}
-        {% endif %}
+ <div class="language-selector-right">
+  {% for language in localization.available_languages %}
+    {% assign current_path = request.path | remove_first: '/fr' | remove_first: '/de' %}
+    {% if current_path == '' or current_path == '/' %}
+      {% assign current_path = '' %}
+    {% endif %}
+    {% assign is_collection = request.page_type == 'collection' %}
+    {% if is_collection %}
+      {% if language.iso_code == localization.default_language.iso_code %}
+        {% assign target_url = '/' %}
       {% else %}
-        {% if language.iso_code == localization.default_language.iso_code %}
-          {% assign target_url = current_path %}
-        {% else %}
-          {% assign target_url = '/' | append: language.iso_code | append: current_path %}
-        {% endif %}
+        {% assign target_url = '/' | append: language.iso_code %}
       {% endif %}
-      {% assign flag_name = language.iso_code | downcase | prepend: 'flag-' | append: '.png' %}
-      <a href="{{ target_url }}" aria-label="{{ language.endonym_name | default: language.name }}" hreflang="{{ language.iso_code }}">
-        <img src="{{ flag_name | asset_url }}" alt="{{ language.endonym_name | default: language.name }}" class="flag-icon" loading="lazy" width="32" height="24">
-      </a>
-    {% endfor %}
-  </div>
+    {% else %}
+      {% if language.iso_code == localization.default_language.iso_code %}
+        {% assign target_url = current_path %}
+      {% else %}
+        {% assign target_url = '/' | append: language.iso_code | append: current_path %}
+      {% endif %}
+    {% endif %}
+    {% assign flag_name = language.iso_code | downcase | prepend: 'flag-' | append: '.png' %}
+    <a href="{{ target_url }}" aria-label="{{ language.endonym_name | default: language.name }}" hreflang="{{ language.iso_code }}">
+      <img src="{{ flag_name | asset_url }}" alt="{{ language.endonym_name | default: language.name }}" class="flag-icon" loading="lazy" width="32" height="24">
+    </a>
+  {% endfor %}
 </div>
