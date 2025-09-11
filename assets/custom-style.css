@@ -2155,3 +2155,7 @@ main {
   display: block;
   object-fit: cover;
 }
+.text-light { color: #ffffff !important; }
+.bg-primary { background-color: #0a7 !important; } /* vert vif */
+a { color: #0645ad; } 
+a:focus, button:focus { outline: 2px solid #0a7; outline-offset: 2px; }
